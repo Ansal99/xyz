@@ -18,30 +18,45 @@ export default function Education() {
             transition={{ duration: 0.7, delay: i * 0.15, ease: [0.32, 0.72, 0, 1] }}
             whileHover={{ y: -6 }}
           >
-            <div
-              className="card-bezel-inner relative overflow-hidden min-h-[420px] flex flex-col justify-end p-0"
-            >
+            <div className="card-bezel-inner relative overflow-hidden min-h-[420px] flex flex-col justify-end p-0">
+
               {/* Background photo */}
               <img
-                src={item.photoPh}
+                src={item.photo}
                 alt={item.name}
                 className="absolute inset-0 w-full h-full object-cover"
                 loading="lazy"
+                onError={(e) => {
+                  e.target.onerror = null
+                  e.target.style.display = 'none'
+                }}
               />
-              {/* Dark gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-              {/* Logo badge */}
-              <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm
-                flex items-center justify-center border border-white/10 text-white font-display font-bold text-lg">
-                {item.short ? item.short[0] : item.name[0]}
-              </div>
+              {/* Dark gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
+
+              {/* Logo badge — only if logo exists */}
+              {item.logo && (
+                <div className="absolute top-4 right-4 w-12 h-12 rounded-full
+                  bg-white/10 backdrop-blur-sm border border-white/15
+                  flex items-center justify-center overflow-hidden">
+                  <img
+                    src={item.logo}
+                    alt={`${item.name} logo`}
+                    className="w-8 h-8 object-contain"
+                    onError={(e) => {
+                      e.target.onerror = null
+                      e.target.parentElement.style.display = 'none'
+                    }}
+                  />
+                </div>
+              )}
 
               {/* Content */}
               <div className="relative z-10 p-6">
                 {item.cgpa && (
-                  <span className="inline-block mb-2 px-2.5 py-0.5 rounded-full bg-accent/20 border border-accent/30
-                    font-mono text-accent text-xs">
+                  <span className="inline-block mb-2 px-2.5 py-0.5 rounded-full
+                    bg-accent/20 border border-accent/30 font-mono text-accent text-xs">
                     CGPA {item.cgpa}
                   </span>
                 )}
@@ -54,6 +69,7 @@ export default function Education() {
                 </p>
                 <p className="font-body text-muted text-sm leading-relaxed">{item.desc}</p>
               </div>
+
             </div>
           </motion.div>
         ))}

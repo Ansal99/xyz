@@ -1,20 +1,26 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { lenis } from '../../main.jsx'
+import { useKeyboardNav } from '../../hooks/useKeyboardNav.js'
+import { siteConfig } from '../../data/siteConfig.js'
 
 const navItems = [
-  { label: 'Work',     href: '#projects' },
-  { label: 'Skills',   href: '#skills' },
-  { label: 'Journey',  href: '#journey' },
-  { label: 'About',    href: '#about' },
-  { label: 'Process',  href: '#creative-process' },
-  { label: 'Contact',  href: '#contact' },
+  { label: 'Work',    href: '#projects' },
+  { label: 'Skills',  href: '#skills' },
+  { label: 'Journey', href: '#journey' },
+  { label: 'About',   href: '#about' },
+  { label: 'Process', href: '#creative-process' },
+  { label: 'Contact', href: '#contact' },
 ]
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [scrolled, setScrolled]   = useState(false)
+  const [menuOpen, setMenuOpen]   = useState(false)
+  const navigate = useNavigate()
+
+  // Step 51 — keyboard shortcuts
+  useKeyboardNav(navigate)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50)
@@ -37,7 +43,7 @@ export default function Navbar() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, delay: 0.2, ease: [0.32, 0.72, 0, 1] }}
-        className="fixed top-5 left-1/2 -translate-x-1/2 z-50"
+        className="fixed top-5 left-1/2 -translate-x-1/2 z-50 w-max"
       >
         <div
           className={`flex items-center gap-1 px-2 py-2 rounded-full
@@ -53,6 +59,25 @@ export default function Navbar() {
           >
             A.K
           </a>
+
+          {/* Step 53 — Open to Work badge */}
+          {siteConfig.openToWork && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8, duration: 0.4 }}
+              className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full mr-1
+                border border-emerald-400/30 bg-emerald-400/08"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+              </span>
+              <span className="font-mono text-[0.65rem] text-emerald-400 tracking-wide">
+                {siteConfig.openToWorkText}
+              </span>
+            </motion.div>
+          )}
 
           {/* Desktop items */}
           <div className="hidden md:flex items-center gap-1">
@@ -107,7 +132,24 @@ export default function Navbar() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
             className="fixed inset-0 z-40 bg-black/90 backdrop-blur-3xl flex flex-col items-center justify-center gap-4"
+            onClick={() => setMenuOpen(false)}
           >
+            {/* Open to Work badge — mobile */}
+            {siteConfig.openToWork && (
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.05 }}
+                className="flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-400/30 bg-emerald-400/08 mb-2"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                </span>
+                <span className="font-mono text-xs text-emerald-400">{siteConfig.openToWorkText}</span>
+              </motion.div>
+            )}
+
             {navItems.map((item, i) => (
               <motion.a
                 key={item.label}
@@ -115,22 +157,36 @@ export default function Navbar() {
                 onClick={e => handleNav(e, item.href)}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: i * 0.08 }}
+                transition={{ delay: i * 0.08 + 0.1 }}
                 className="font-display text-2xl text-text hover:text-accent transition-colors"
               >
                 {item.label}
               </motion.a>
             ))}
+
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: navItems.length * 0.08 }}
+              transition={{ delay: navItems.length * 0.08 + 0.1 }}
             >
-              <Link to="/gallery" onClick={() => setMenuOpen(false)}
-                className="font-display text-2xl text-accent">
-                Gallery
+              <Link
+                to="/gallery"
+                onClick={() => setMenuOpen(false)}
+                className="font-display text-2xl text-accent"
+              >
+                Gallery →
               </Link>
             </motion.div>
+
+            {/* Keyboard hint — desktop users who opened via keyboard */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="absolute bottom-8 font-mono text-[10px] text-muted tracking-widest"
+            >
+              Press G for Gallery · / for Contact
+            </motion.p>
           </motion.div>
         )}
       </AnimatePresence>

@@ -16,6 +16,15 @@ export default {
         body:    ['Satoshi', 'sans-serif'],
         mono:    ['JetBrains Mono', 'monospace'],
       },
+      // ── Tighter section spacing ──────────────────────────────
+      // py-32 was 8rem (128px) → now 4.5rem (72px)
+      // py-48 was 12rem (192px) → now 6rem (96px)
+      // This affects all section components without touching each file.
+      spacing: {
+        '32': '4.5rem',
+        '48': '6rem',
+      },
+      // ────────────────────────────────────────────────────────
       animation: {
         'marquee-left':  'marquee-left 35s linear infinite',
         'marquee-right': 'marquee-right 45s linear infinite',

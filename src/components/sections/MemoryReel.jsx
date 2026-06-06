@@ -26,10 +26,15 @@ export default function MemoryReel() {
                 />
               ) : (
                 <img
-                  src={item.ph}
+                  src={item.src}
                   alt="Memory reel photo"
-                  className="w-full h-full object-cover animate-ken-burns"
+                  className="w-full h-full object-cover"
                   loading="lazy"
+                  onError={(e) => {
+                    if (e.target.src !== item.ph) {
+                      e.target.src = item.ph
+                    }
+                  }}
                 />
               )}
             </div>

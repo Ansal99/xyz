@@ -74,8 +74,8 @@ const FLOAT_CARDS = [
 
 /* ── Main Hero ───────────────────────────────────────────────── */
 export default function Hero() {
-  const heroRef      = useRef(null)
-  const [scene, setScene]   = useState(0)
+  const heroRef        = useRef(null)
+  const [scene, setScene]     = useState(0)
   const [chevron, setChevron] = useState(false)
   const { scrollY } = useScroll()
   const contentY  = useTransform(scrollY, [0, 500], [0, -50])
@@ -186,17 +186,21 @@ export default function Hero() {
               </span>
             </motion.div>
 
-            {/* H1 */}
+            {/* H1 — NEW INTRO STYLE */}
             <motion.h1
-              className="font-display font-bold text-text leading-[1.04] mb-6"
-              style={{ fontSize:'clamp(2.8rem,5.5vw,5.5rem)', letterSpacing:'-0.03em' }}
+              className="font-display font-bold text-text leading-[1.08] mb-6"
+              style={{ fontSize:'clamp(3rem,5.5vw,5.5rem)', letterSpacing:'-0.03em' }}
               initial={{ opacity:0, y:40 }}
               animate={{ opacity:1, y:0 }}
               transition={{ duration:0.9, delay:0.45, ease:[0.32,0.72,0,1] }}
             >
-              I turn raw data
-              <br />
+              {/* Line 1 — name */}
+              <span className="block text-text">
+                I am Ansal.
+              </span>
+              {/* Line 2 — what he is, gradient */}
               <span
+                className="block"
                 style={{
                   background:'linear-gradient(135deg,#6EE7B7,#818CF8,#F59E0B,#6EE7B7)',
                   backgroundSize:'300% auto',
@@ -206,11 +210,11 @@ export default function Hero() {
                   animation:'shimmer 6s linear infinite',
                 }}
               >
-                into decisions.
+                I am a Data Scientist.
               </span>
             </motion.h1>
 
-            {/* Subtitle */}
+            {/* Subtitle — direct, confident, indirect hobbies */}
             <motion.p
               className="font-body text-muted leading-[1.85] mb-10 max-w-lg"
               style={{ fontSize:'1.05rem' }}
@@ -218,7 +222,7 @@ export default function Hero() {
               animate={{ opacity:1, y:0 }}
               transition={{ duration:0.8, delay:0.65 }}
             >
-              Full stack thinker. ML-first problem solver. Occasionally found
+              ML-first problem solver. Full stack builder. Occasionally found
               defending goals, cutting laps, or lifting heavy things.
             </motion.p>
 

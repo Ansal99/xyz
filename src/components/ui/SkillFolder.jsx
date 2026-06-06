@@ -1,67 +1,185 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-function getSimpleIconUrl(slug) {
-  const known = ['python','pandas','numpy','scikitlearn','react','javascript','html5','css3','nodedotjs','flask','mysql','mongodb','git','github','postman','xgboost']
-  if (known.includes(slug)) return `https://cdn.simpleicons.org/${slug}/ffffff`
-  return null
+const ICON_BASE = 'https://cdn.simpleicons.org'
+
+const iconSlugs = {
+  python: 'python', pandas: 'pandas', numpy: 'numpy',
+  scikitlearn: 'scikitlearn', react: 'react', javascript: 'javascript',
+  html5: 'html5', css3: 'css3', nodedotjs: 'nodedotjs', flask: 'flask',
+  mysql: 'mysql', mongodb: 'mongodb', git: 'git', github: 'github',
+  postman: 'postman',
+}
+
+function SkillPill({ name, icon, accentColor, index }) {
+  const slug = iconSlugs[icon]
+  return (
+    <motion.span
+      initial={{ opacity: 0, scale: 0.85, y: 8 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ delay: index * 0.035, duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
+        font-body text-xs text-text border border-white/08
+        hover:border-white/20 transition-colors duration-200"
+      style={{ background: 'rgba(255,255,255,0.04)' }}
+    >
+      {slug && (
+        <img
+          src={`${ICON_BASE}/${slug}/ffffff`}
+          alt=""
+          className="w-3 h-3 opacity-70"
+          onError={e => { e.target.style.display = 'none' }}
+        />
+      )}
+      {name}
+    </motion.span>
+  )
+}
+
+/* ── Category icon — simple SVG, no CSS 3D tricks ── */
+function CategoryIcon({ type, color }) {
+  const s = { stroke: color, strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round', fill: 'none' }
+  const icons = {
+    neural: (
+      <svg width="24" height="24" viewBox="0 0 24 24" {...{ xmlns: 'http://www.w3.org/2000/svg' }}>
+        <circle cx="12" cy="12" r="3" {...s} />
+        <circle cx="4"  cy="6"  r="2" {...s} />
+        <circle cx="20" cy="6"  r="2" {...s} />
+        <circle cx="4"  cy="18" r="2" {...s} />
+        <circle cx="20" cy="18" r="2" {...s} />
+        <line x1="6"  y1="7"  x2="10" y2="11" {...s} opacity="0.5" />
+        <line x1="18" y1="7"  x2="14" y2="11" {...s} opacity="0.5" />
+        <line x1="6"  y1="17" x2="10" y2="13" {...s} opacity="0.5" />
+        <line x1="18" y1="17" x2="14" y2="13" {...s} opacity="0.5" />
+      </svg>
+    ),
+    browser: (
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="14" rx="2" {...s} />
+        <line x1="3" y1="10" x2="21" y2="10" {...s} opacity="0.5" />
+        <circle cx="7" cy="7.5" r="1" fill={color} opacity="0.6" />
+        <circle cx="10.5" cy="7.5" r="1" fill={color} opacity="0.6" />
+      </svg>
+    ),
+    server: (
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <rect x="4" y="4"  width="16" height="5" rx="1" {...s} />
+        <rect x="4" y="11" width="16" height="5" rx="1" {...s} />
+        <circle cx="19" cy="6.5"  r="1" fill={color} opacity="0.7" />
+        <circle cx="19" cy="13.5" r="1" fill={color} opacity="0.7" />
+      </svg>
+    ),
+    cylinder: (
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="6"  rx="8" ry="3" {...s} />
+        <ellipse cx="12" cy="18" rx="8" ry="3" {...s} />
+        <line x1="4"  y1="6" x2="4"  y2="18" {...s} opacity="0.4" />
+        <line x1="20" y1="6" x2="20" y2="18" {...s} opacity="0.4" />
+      </svg>
+    ),
+    gear: (
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" {...s} />
+        <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" {...s} opacity="0.5" />
+      </svg>
+    ),
+  }
+  return icons[type] || null
 }
 
 export default function SkillFolder({ category, skills, colSpan, iconType, accentColor }) {
   const [open, setOpen] = useState(false)
 
-  const Icon3D = {
-    neural:   <NeuralIcon color={accentColor} />,
-    browser:  <BrowserIcon color={accentColor} />,
-    server:   <ServerIcon color={accentColor} />,
-    cylinder: <CylinderIcon color={accentColor} />,
-    gear:     <GearIcon color={accentColor} />,
-  }[iconType] || null
-
   return (
     <motion.div
-      className={`card-bezel ${colSpan === 2 ? 'md:col-span-2' : ''}`}
+      className={`card-bezel cursor-pointer select-none ${colSpan === 2 ? 'md:col-span-2' : ''}`}
       onHoverStart={() => setOpen(true)}
       onHoverEnd={() => setOpen(false)}
       onClick={() => setOpen(v => !v)}
-      whileHover={{ scale: 1.015 }}
-      transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
-      style={{ '--accent-local': accentColor }}
     >
-      <div className="card-bezel-inner cursor-pointer">
-        <div className="flex items-start justify-between mb-4">
-          <div>{Icon3D}</div>
-          <span className="font-mono text-xs px-2 py-1 rounded-full border border-white/10 text-muted">
-            {skills.length} skills
-          </span>
-        </div>
-        <h3 className="font-display font-semibold text-text mb-1" style={{ fontSize: '1.1rem' }}>
-          {category}
-        </h3>
+      <div className="card-bezel-inner">
+        {/* Header row */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <CategoryIcon type={iconType} color={accentColor} />
+            <h3 className="font-display font-semibold text-text" style={{ fontSize: '1rem' }}>
+              {category}
+            </h3>
+          </div>
 
-        <AnimatePresence>
-          {open && (
+          {/* Count + chevron */}
+          <div className="flex items-center gap-2">
+            <span
+              className="font-mono text-[10px] px-2 py-0.5 rounded-full border"
+              style={{
+                color: accentColor,
+                borderColor: `${accentColor}35`,
+                background: `${accentColor}10`,
+              }}
+            >
+              {skills.length}
+            </span>
+            <motion.span
+              animate={{ rotate: open ? 180 : 0 }}
+              transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+              className="text-muted"
+              style={{ fontSize: '0.7rem', display: 'inline-block' }}
+            >
+              ▾
+            </motion.span>
+          </div>
+        </div>
+
+        {/* Closed state — preview first 4 skills as faded tags */}
+        <AnimatePresence mode="wait">
+          {!open ? (
             <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.45, ease: [0.32, 0.72, 0, 1] }}
+              key="preview"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-wrap gap-1.5"
+            >
+              {skills.slice(0, colSpan === 2 ? 5 : 3).map((s) => (
+                <span
+                  key={s.name}
+                  className="font-mono text-[10px] px-2 py-0.5 rounded text-muted"
+                  style={{ background: 'rgba(255,255,255,0.04)' }}
+                >
+                  {s.name}
+                </span>
+              ))}
+              {skills.length > (colSpan === 2 ? 5 : 3) && (
+                <span className="font-mono text-[10px] px-2 py-0.5 rounded text-muted"
+                  style={{ background: 'rgba(255,255,255,0.04)' }}>
+                  +{skills.length - (colSpan === 2 ? 5 : 3)} more
+                </span>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="expanded"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.38, ease: [0.32, 0.72, 0, 1] }}
               className="overflow-hidden"
             >
-              <div className="flex flex-wrap gap-2 mt-4">
+              {/* Accent divider */}
+              <div
+                className="mb-3 h-px rounded-full"
+                style={{ background: `linear-gradient(to right, ${accentColor}40, transparent)` }}
+              />
+              <div className="flex flex-wrap gap-2">
                 {skills.map((s, i) => (
-                  <motion.span
+                  <SkillPill
                     key={s.name}
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: i * 0.04, duration: 0.3 }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 font-body text-xs text-text"
-                  >
-                    {getSimpleIconUrl(s.icon) && (
-                      <img src={getSimpleIconUrl(s.icon)} alt={s.name} className="w-3.5 h-3.5" />
-                    )}
-                    {s.name}
-                  </motion.span>
+                    name={s.name}
+                    icon={s.icon}
+                    accentColor={accentColor}
+                    index={i}
+                  />
                 ))}
               </div>
             </motion.div>
@@ -69,58 +187,5 @@ export default function SkillFolder({ category, skills, colSpan, iconType, accen
         </AnimatePresence>
       </div>
     </motion.div>
-  )
-}
-
-function NeuralIcon({ color }) {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style={{ animation: 'spin-slow 8s linear infinite' }}>
-      <circle cx="20" cy="20" r="18" stroke={color} strokeWidth="1" opacity="0.4" />
-      <circle cx="20" cy="20" r="12" stroke={color} strokeWidth="1" opacity="0.25" />
-      {[0,60,120,180,240,300].map((a,i) => {
-        const x = 20 + 18 * Math.cos(a * Math.PI/180)
-        const y = 20 + 18 * Math.sin(a * Math.PI/180)
-        return <circle key={i} cx={x} cy={y} r="2.5" fill={color} opacity="0.7" />
-      })}
-    </svg>
-  )
-}
-function BrowserIcon({ color }) {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-      <rect x="4" y="8" width="32" height="24" rx="3" stroke={color} strokeWidth="1.5" opacity="0.6" />
-      <line x1="4" y1="15" x2="36" y2="15" stroke={color} strokeWidth="1" opacity="0.4" />
-      <circle cx="10" cy="11.5" r="1.5" fill={color} opacity="0.5" />
-      <circle cx="16" cy="11.5" r="1.5" fill={color} opacity="0.5" />
-    </svg>
-  )
-}
-function ServerIcon({ color }) {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-      {[8,16,24].map(y => (
-        <rect key={y} x="8" y={y} width="24" height="6" rx="1.5" stroke={color} strokeWidth="1.2" opacity="0.5" />
-      ))}
-      <circle cx="28" cy="11" r="1.5" fill={color} opacity="0.7" />
-      <circle cx="28" cy="19" r="1.5" fill={color} opacity="0.7" />
-    </svg>
-  )
-}
-function CylinderIcon({ color }) {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-      <ellipse cx="20" cy="10" rx="12" ry="4" stroke={color} strokeWidth="1.2" opacity="0.6" />
-      <line x1="8" y1="10" x2="8" y2="30" stroke={color} strokeWidth="1.2" opacity="0.4" />
-      <line x1="32" y1="10" x2="32" y2="30" stroke={color} strokeWidth="1.2" opacity="0.4" />
-      <ellipse cx="20" cy="30" rx="12" ry="4" stroke={color} strokeWidth="1.2" opacity="0.6" />
-    </svg>
-  )
-}
-function GearIcon({ color }) {
-  return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style={{ animation: 'spin-slow 8s linear infinite' }}>
-      <circle cx="20" cy="20" r="6" stroke={color} strokeWidth="1.5" opacity="0.7" />
-      <circle cx="20" cy="20" r="14" stroke={color} strokeWidth="1" strokeDasharray="3 4" opacity="0.3" />
-    </svg>
   )
 }
