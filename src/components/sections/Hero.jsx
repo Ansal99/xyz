@@ -317,7 +317,7 @@ export default function Hero() {
               <div className="relative w-64 h-80 md:w-72 md:h-96 lg:w-80 lg:h-[420px] rounded-[2rem] overflow-hidden border border-white/10">
                 <img
                   src="/assets/ansal-photo.jpg"
-                  alt="Ansal Kumar"
+                  alt="Ansal"
                   className="w-full h-full object-cover object-top"
                   style={{ filter:'brightness(0.95) contrast(1.05)' }}
                 />
@@ -327,7 +327,7 @@ export default function Hero() {
                 {/* Name badge overlay */}
                 <div className="absolute bottom-4 left-4 right-4">
                   <div className="backdrop-blur-md bg-black/50 rounded-xl px-4 py-2.5 border border-white/10">
-                    <p className="font-display font-bold text-text text-sm">Ansal Kumar</p>
+                    <p className="font-display font-bold text-text text-sm">Ansal</p>
                     <p className="font-mono text-[10px]" style={{ color:currentScene.accent }}>
                       {currentScene.emoji} {currentScene.label} Mode
                     </p>
