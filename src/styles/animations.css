@@ -1,41 +1,38 @@
-/* ── Marquee ── */
+/* Marquee */
 @keyframes marquee-left  { 0% { transform: translateX(0); }    100% { transform: translateX(-50%); } }
 @keyframes marquee-right { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
-
 .animate-marquee-left  { animation: marquee-left  35s linear infinite; }
 .animate-marquee-right { animation: marquee-right 45s linear infinite; }
 .animate-marquee-left:hover,
 .animate-marquee-right:hover { animation-play-state: paused; }
 
-/* ── Pulse dot ── */
-@keyframes pulse-dot {
-  0%,100% { transform: scale(1);   opacity: 1;   }
-  50%      { transform: scale(1.6); opacity: 0.4; }
-}
+/* Pulse dot */
+@keyframes pulse-dot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:0.4} }
 .animate-pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
 
-/* ── Float ── */
-@keyframes float {
-  0%,100% { transform: translateY(0px); }
-  50%      { transform: translateY(-10px); }
-}
+/* Float */
+@keyframes float { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-10px)} }
 .animate-float { animation: float 6s ease-in-out infinite; }
 
-/* ── Scroll chevron bounce ── */
-@keyframes bounce-y {
-  0%,100% { transform: translateY(0); }
-  50%      { transform: translateY(8px); }
-}
+/* Bounce chevron */
+@keyframes bounce-y { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
 .animate-bounce-y { animation: bounce-y 1.5s ease-in-out infinite; }
 
-/* ── Loader line expand ── */
-@keyframes line-expand { from { width: 0; } to { width: 120px; } }
-.loader-line { animation: line-expand 1.2s ease-in-out forwards; }
+/* Spin slow */
+@keyframes spin-slow { from{transform:rotateY(0deg)} to{transform:rotateY(360deg)} }
 
-/* ── Spin slow (for 3D CSS icons) ── */
-@keyframes spin-slow { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
-.animate-spin-slow { animation: spin-slow 8s linear infinite; }
-
-/* ── Ken Burns ── */
-@keyframes ken-burns { from { transform: scale(1.0); } to { transform: scale(1.05); } }
+/* Ken burns */
+@keyframes ken-burns { from{transform:scale(1.0)} to{transform:scale(1.05)} }
 .animate-ken-burns { animation: ken-burns 3s ease-in-out infinite alternate; }
+
+/* Shimmer gradient text */
+@keyframes shimmer { 0%{background-position:0% center} 100%{background-position:200% center} }
+
+/* Scene fade */
+@keyframes sceneFade { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* Photo glow pulse */
+@keyframes photoGlow {
+  0%,100%{ box-shadow:0 0 40px rgba(110,231,183,0.2), 0 0 80px rgba(110,231,183,0.08) }
+  50%{ box-shadow:0 0 60px rgba(110,231,183,0.35), 0 0 120px rgba(110,231,183,0.15) }
+}

@@ -7,9 +7,9 @@ export default function RouterApp() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/"                  element={<App />} />
-        <Route path="/gallery"           element={<GalleryPage />} />
-        <Route path="/projects/courtx"   element={<CourtXCaseStudy />} />
+        <Route path="/"                element={<App />} />
+        <Route path="/gallery"         element={<GalleryPage />} />
+        <Route path="/projects/courtx" element={<CourtXCaseStudy />} />
       </Routes>
     </BrowserRouter>
   )
