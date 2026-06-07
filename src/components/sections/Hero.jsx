@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Canvas, useFrame } from '@react-three/fiber'
-import * as THREE from 'three'
 
 /* ── 3D Background Mesh ──────────────────────────────────────── */
 function BackgroundMesh() {
@@ -16,11 +15,11 @@ function BackgroundMesh() {
     <>
       <mesh ref={mesh1}>
         <icosahedronGeometry args={[2, 1]} />
-        <meshBasicMaterial color="#6EE7B7" wireframe transparent opacity={0.06} />
+        <meshBasicMaterial color="#6EE7B7" wireframe transparent opacity={0.05} />
       </mesh>
       <mesh ref={mesh2}>
         <torusGeometry args={[3, 0.012, 8, 80]} />
-        <meshBasicMaterial color="#818CF8" transparent opacity={0.1} />
+        <meshBasicMaterial color="#818CF8" transparent opacity={0.08} />
       </mesh>
       <ambientLight intensity={0.3} />
       <pointLight position={[3, 3, 3]} color="#6EE7B7" intensity={0.5} />
@@ -28,157 +27,218 @@ function BackgroundMesh() {
   )
 }
 
-/* ── Scene backgrounds (scroll-driven) ──────────────────────── */
-const SCENES = [
-  {
-    id: 'code',
-    label: 'Deep Work',
-    emoji: '💻',
-    bg: 'radial-gradient(ellipse at 20% 50%, rgba(110,231,183,0.07) 0%, transparent 55%), radial-gradient(ellipse at 80% 20%, rgba(129,140,248,0.07) 0%, transparent 55%), #050505',
-    accent: '#6EE7B7',
-    description: 'Writing ML models at 2am',
-  },
-  {
-    id: 'gym',
-    label: 'Gym',
-    emoji: '🏋️',
-    bg: 'radial-gradient(ellipse at 60% 40%, rgba(245,158,11,0.1) 0%, transparent 55%), radial-gradient(ellipse at 20% 70%, rgba(239,68,68,0.06) 0%, transparent 55%), #050505',
-    accent: '#F59E0B',
-    description: 'Pretending the next set isn\'t heavy',
-  },
-  {
-    id: 'football',
-    label: 'Football',
-    emoji: '⚽',
-    bg: 'radial-gradient(ellipse at 50% 60%, rgba(34,197,94,0.1) 0%, transparent 55%), radial-gradient(ellipse at 30% 30%, rgba(110,231,183,0.06) 0%, transparent 55%), #050505',
-    accent: '#22C55E',
-    description: 'Holding the defensive line',
-  },
-  {
-    id: 'swim',
-    label: 'Swimming',
-    emoji: '🏊',
-    bg: 'radial-gradient(ellipse at 40% 50%, rgba(59,130,246,0.12) 0%, transparent 55%), radial-gradient(ellipse at 70% 30%, rgba(129,140,248,0.08) 0%, transparent 55%), #050505',
-    accent: '#3B82F6',
-    description: 'Cutting laps in the pool',
-  },
-]
-
-/* ── Floating stat cards ─────────────────────────────────────── */
+/* ── Only 2 float cards — clean, not messy ───────────────────── */
 const FLOAT_CARDS = [
-  { label: 'CourtX',   sub: '34 States · 9 Cases', color: '#818CF8', delay: 0,   pos: { top: '18%', left: '2%' } },
-  { label: 'SIH',      sub: 'National · Team Cobra', color: '#6EE7B7', delay: 1.5, pos: { top: '16%', right: '2%' } },
-  { label: 'XGBoost',  sub: '+ SHAP Explainability', color: '#F59E0B', delay: 0.8, pos: { bottom: '26%', left: '3%' } },
-  { label: 'CT-FARMA', sub: 'Mistral AI · Bilingual', color: '#EC4899', delay: 2,   pos: { bottom: '24%', right: '2%' } },
+  {
+    id: 'courtx',
+    name: 'CourtX',
+    sub: 'Legal AI · 34 States',
+    tag: 'XGBoost + SHAP',
+    color: '#818CF8',
+    side: 'left',
+  },
+  {
+    id: 'ctfarma',
+    name: 'CT-FARMA',
+    sub: 'Farmer AI · Bilingual',
+    tag: 'Mistral AI',
+    color: '#6EE7B7',
+    side: 'right',
+  },
 ]
 
-/* ── Main Hero ───────────────────────────────────────────────── */
-export default function Hero() {
-  const heroRef        = useRef(null)
-  const [scene, setScene]     = useState(0)
-  const [chevron, setChevron] = useState(false)
-  const { scrollY } = useScroll()
-  const contentY  = useTransform(scrollY, [0, 500], [0, -50])
-  const contentOp = useTransform(scrollY, [0, 400], [1, 0])
+/* ── Typewriter — cycles through lines automatically ────────── */
+const TYPEWRITER_LINES = [
+  'Building ML systems that explain themselves.',
+  'XGBoost, SHAP, and full-stack platforms.',
+  'From Himachal Pradesh — working on real problems.',
+  'Courts, farms, defence. Data solved all three.',
+]
 
-  /* Show chevron after 3s, hide on scroll */
+function TypewriterText() {
+  const [idx, setIdx] = useState(0)
+  const [displayed, setDisplayed] = useState('')
+  const [typing, setTyping] = useState(true)
+
   useEffect(() => {
-    const t = setTimeout(() => setChevron(true), 3000)
+    const target = TYPEWRITER_LINES[idx]
+    let i = 0
+    setDisplayed('')
+    setTyping(true)
+
+    const interval = setInterval(() => {
+      i++
+      setDisplayed(target.slice(0, i))
+      if (i >= target.length) {
+        clearInterval(interval)
+        setTyping(false)
+        setTimeout(() => {
+          setIdx(prev => (prev + 1) % TYPEWRITER_LINES.length)
+        }, 2600)
+      }
+    }, 36)
+
+    return () => clearInterval(interval)
+  }, [idx])
+
+  return (
+    <span>
+      {displayed}
+      <span
+        style={{
+          display: 'inline-block',
+          width: '2px',
+          height: '1em',
+          marginLeft: '2px',
+          verticalAlign: 'middle',
+          background: '#6EE7B7',
+          animation: typing ? 'none' : 'cursorblink 0.8s step-end infinite',
+        }}
+      />
+    </span>
+  )
+}
+
+/* ── Intro lines — staggered, cinematic ─────────────────────── */
+const INTRO_LINES = [
+  { text: 'This is Ansal.',         size: 'clamp(3rem, 5.5vw, 5.5rem)', color: '#F8FAFC',   weight: 700, delay: 0.1 },
+  { text: 'Not the guy who',        size: 'clamp(1.4rem, 2.5vw, 2.2rem)', color: '#94A3B8', weight: 400, delay: 0.35 },
+  { text: 'talks about data.',      size: 'clamp(1.4rem, 2.5vw, 2.2rem)', color: '#94A3B8', weight: 400, delay: 0.55 },
+  { text: 'The one who does',       size: 'clamp(1.6rem, 3vw, 2.8rem)',   color: '#6EE7B7', weight: 600, delay: 0.8 },
+  { text: 'something with it.',     size: 'clamp(1.6rem, 3vw, 2.8rem)',   color: '#6EE7B7', weight: 600, delay: 0.95 },
+]
+
+export default function Hero() {
+  const heroRef = useRef(null)
+  const [chevron, setChevron] = useState(false)
+  const [cardsVisible, setCardsVisible] = useState(false)
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setCardsVisible(true), 1800)
+    const t2 = setTimeout(() => setChevron(true), 3800)
     const onScroll = () => { if (window.scrollY > 80) setChevron(false) }
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => { clearTimeout(t); window.removeEventListener('scroll', onScroll) }
+    return () => {
+      clearTimeout(t1); clearTimeout(t2)
+      window.removeEventListener('scroll', onScroll)
+    }
   }, [])
-
-  /* Cycle scenes on scroll inside hero */
-  useEffect(() => {
-    const unsubscribe = scrollY.on('change', (v) => {
-      const heroH = heroRef.current?.offsetHeight || window.innerHeight
-      const pct = v / heroH
-      if      (pct < 0.25) setScene(0)
-      else if (pct < 0.5)  setScene(1)
-      else if (pct < 0.75) setScene(2)
-      else                 setScene(3)
-    })
-    return unsubscribe
-  }, [scrollY])
-
-  const currentScene = SCENES[scene]
 
   return (
     <section
       ref={heroRef}
       className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden"
-      style={{ background: currentScene.bg, transition: 'background 1.2s ease' }}
+      style={{ background: '#050505' }}
     >
       {/* 3D canvas */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <Canvas dpr={[1,2]} camera={{ position:[0,0,7], fov:55 }}>
+        <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 7], fov: 55 }}>
           <BackgroundMesh />
         </Canvas>
       </div>
 
-      {/* Grid overlay */}
-      <div className="absolute inset-0 z-[1] pointer-events-none opacity-[0.03]"
-        style={{backgroundImage:'repeating-linear-gradient(0deg,transparent,transparent 39px,#6EE7B7 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#6EE7B7 40px)'}} />
+      {/* Subtle grid */}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none"
+        style={{
+          opacity: 0.02,
+          backgroundImage:
+            'repeating-linear-gradient(0deg,transparent,transparent 39px,#6EE7B7 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#6EE7B7 40px)',
+        }}
+      />
 
-      {/* Scene label — top right */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentScene.id}
-          initial={{ opacity:0, x:20 }}
-          animate={{ opacity:1, x:0 }}
-          exit={{ opacity:0, x:-20 }}
-          transition={{ duration:0.5 }}
-          className="absolute top-24 right-6 z-20 hidden md:flex items-center gap-2
-            px-4 py-2 rounded-full border font-mono text-xs"
-          style={{ borderColor:`${currentScene.accent}40`, background:`${currentScene.accent}0D`, color:currentScene.accent }}
-        >
-          <span>{currentScene.emoji}</span>
-          <span>{currentScene.description}</span>
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Floating cards — desktop only */}
+      {/* ── FLOAT CARDS — only 2, vertically centered on sides ── */}
       {FLOAT_CARDS.map((card) => (
-        <motion.div
-          key={card.label}
-          className="absolute z-10 hidden lg:flex items-center gap-3 px-4 py-3 rounded-2xl
-            backdrop-blur-xl border"
-          style={{
-            ...card.pos,
-            background:'rgba(13,13,13,0.8)',
-            borderColor:`${card.color}25`,
-          }}
-          initial={{ opacity:0, y:20 }}
-          animate={{ opacity:1, y:[0,-8,0] }}
-          transition={{
-            opacity:{ duration:0.6, delay:card.delay+1.5 },
-            y:{ duration:4, repeat:Infinity, ease:'easeInOut', delay:card.delay },
-          }}
-        >
-          <div className="w-2 h-2 rounded-full" style={{ background:card.color }} />
-          <div>
-            <p className="font-display font-semibold text-text text-xs leading-tight">{card.label}</p>
-            <p className="font-mono text-[10px]" style={{ color:card.color+'99' }}>{card.sub}</p>
-          </div>
-        </motion.div>
+        <AnimatePresence key={card.id}>
+          {cardsVisible && (
+            <motion.div
+              className="absolute z-20 hidden xl:block"
+              style={{
+                top: '50%',
+                transform: 'translateY(-50%)',
+                ...(card.side === 'left' ? { left: '2%' } : { right: '2%' }),
+              }}
+              initial={{ opacity: 0, x: card.side === 'left' ? -20 : 20 }}
+              animate={{ opacity: 1, x: 0, y: ['-50%', 'calc(-50% - 8px)', '-50%'] }}
+              transition={{
+                opacity: { duration: 0.5 },
+                x: { duration: 0.5 },
+                y: { duration: 4, repeat: Infinity, ease: 'easeInOut' },
+              }}
+            >
+              {/* Single clean border */}
+              <div
+                style={{
+                  padding: '1px',
+                  borderRadius: '18px',
+                  background: `linear-gradient(160deg, ${card.color}40, transparent 60%)`,
+                }}
+              >
+                <div
+                  style={{
+                    background: 'rgba(8,8,8,0.88)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '17px',
+                    padding: '16px 20px',
+                    minWidth: '170px',
+                    maxWidth: '200px',
+                  }}
+                >
+                  {/* Dot + tag */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <div
+                      className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                      style={{ background: card.color }}
+                    />
+                    <span
+                      className="font-mono uppercase tracking-widest"
+                      style={{ fontSize: '9px', color: `${card.color}90` }}
+                    >
+                      {card.tag}
+                    </span>
+                  </div>
+
+                  {/* Name */}
+                  <p
+                    className="font-display font-bold text-white leading-none mb-1.5"
+                    style={{ fontSize: '16px', letterSpacing: '-0.02em' }}
+                  >
+                    {card.name}
+                  </p>
+
+                  {/* Sub */}
+                  <p
+                    className="font-mono"
+                    style={{ fontSize: '11px', color: 'rgba(255,255,255,0.35)', lineHeight: 1.5 }}
+                  >
+                    {card.sub}
+                  </p>
+
+                  {/* Bottom accent line */}
+                  <div
+                    className="mt-3 h-px rounded-full"
+                    style={{ background: `linear-gradient(90deg, ${card.color}50, transparent)` }}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       ))}
 
       {/* ── MAIN CONTENT ── */}
-      <motion.div
-        style={{ y:contentY, opacity:contentOp }}
-        className="relative z-10 max-w-6xl mx-auto px-6 w-full"
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[80vh]">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center min-h-[85vh]">
 
-          {/* LEFT — text */}
+          {/* LEFT — Intro text */}
           <div className="flex flex-col justify-center order-2 lg:order-1">
-            {/* Eyebrow */}
+
+            {/* Eyebrow pill */}
             <motion.div
-              initial={{ opacity:0, y:20 }}
-              animate={{ opacity:1, y:0 }}
-              transition={{ duration:0.7, delay:0.3 }}
-              className="mb-7"
+              className="mb-10"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
             >
               <span className="eyebrow-pill">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse-dot" />
@@ -186,204 +246,214 @@ export default function Hero() {
               </span>
             </motion.div>
 
-            {/* H1 — NEW INTRO STYLE */}
-            <motion.h1
-              className="font-display font-bold text-text leading-[1.08] mb-6"
-              style={{ fontSize:'clamp(3rem,5.5vw,5.5rem)', letterSpacing:'-0.03em' }}
-              initial={{ opacity:0, y:40 }}
-              animate={{ opacity:1, y:0 }}
-              transition={{ duration:0.9, delay:0.45, ease:[0.32,0.72,0,1] }}
-            >
-              {/* Line 1 — name */}
-              <span className="block text-text">
-                I am Ansal.
-              </span>
-              {/* Line 2 — what he is, gradient */}
-              <span
-                className="block"
-                style={{
-                  background:'linear-gradient(135deg,#6EE7B7,#818CF8,#F59E0B,#6EE7B7)',
-                  backgroundSize:'300% auto',
-                  WebkitBackgroundClip:'text',
-                  WebkitTextFillColor:'transparent',
-                  backgroundClip:'text',
-                  animation:'shimmer 6s linear infinite',
-                }}
-              >
-                I am a Data Scientist.
-              </span>
-            </motion.h1>
+            {/* Staggered intro lines */}
+            <div className="flex flex-col gap-1 mb-12" style={{ lineHeight: 1.1 }}>
+              {INTRO_LINES.map((line, i) => (
+                <motion.p
+                  key={i}
+                  className="font-display"
+                  style={{
+                    fontSize: line.size,
+                    color: line.color,
+                    fontWeight: line.weight,
+                    letterSpacing: '-0.02em',
+                  }}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.65,
+                    delay: line.delay,
+                    ease: [0.32, 0.72, 0, 1],
+                  }}
+                >
+                  {line.text}
+                </motion.p>
+              ))}
+            </div>
 
-            {/* Subtitle — direct, confident, indirect hobbies */}
+            {/* Typewriter */}
             <motion.p
-              className="font-body text-muted leading-[1.85] mb-10 max-w-lg"
-              style={{ fontSize:'1.05rem' }}
-              initial={{ opacity:0, y:25 }}
-              animate={{ opacity:1, y:0 }}
-              transition={{ duration:0.8, delay:0.65 }}
+              className="font-mono mb-10"
+              style={{
+                fontSize: '0.9rem',
+                color: 'rgba(255,255,255,0.4)',
+                minHeight: '1.6rem',
+                lineHeight: 1.8,
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 1.15 }}
             >
-              ML-first problem solver. Full stack builder. Occasionally found
-              defending goals, cutting laps, or lifting heavy things.
+              <TypewriterText />
             </motion.p>
 
             {/* CTAs */}
             <motion.div
               className="flex flex-wrap gap-4"
-              initial={{ opacity:0, y:20 }}
-              animate={{ opacity:1, y:0 }}
-              transition={{ duration:0.7, delay:0.85 }}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.3 }}
             >
-              <motion.button
-                whileHover={{ y:-3 }}
-                whileTap={{ scale:0.97 }}
-                onClick={() => document.querySelector('#projects')?.scrollIntoView({ behavior:'smooth' })}
-                className="px-8 py-3.5 rounded-full font-body font-semibold text-sm text-bg
-                  bg-accent hover:bg-accent/90 transition-colors duration-200
-                  shadow-[0_8px_32px_rgba(110,231,183,0.3)]"
+              <button
+                onClick={() => document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth' })}
+                className="px-8 py-3.5 rounded-full font-body font-semibold text-sm transition-all duration-200"
+                style={{
+                  background: '#6EE7B7',
+                  color: '#050505',
+                  boxShadow: '0 8px 32px rgba(110,231,183,0.22)',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 40px rgba(110,231,183,0.38)' }}
+                onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 8px 32px rgba(110,231,183,0.22)' }}
               >
                 View My Work →
-              </motion.button>
-              <motion.a
+              </button>
+              <a
                 href="/assets/resume/ansal-resume.pdf"
-                whileHover={{ y:-3 }}
-                whileTap={{ scale:0.97 }}
-                className="px-8 py-3.5 rounded-full font-body text-sm text-muted
-                  border border-white/10 hover:border-accent/40 hover:text-accent
-                  transition-all duration-200 backdrop-blur-sm"
+                className="px-8 py-3.5 rounded-full font-body text-sm transition-all duration-200"
+                style={{
+                  border: '1px solid rgba(255,255,255,0.10)',
+                  color: 'rgba(255,255,255,0.55)',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = 'rgba(110,231,183,0.35)'
+                  e.currentTarget.style.color = '#6EE7B7'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'
+                  e.currentTarget.style.color = 'rgba(255,255,255,0.55)'
+                }}
               >
                 Resume ↓
-              </motion.a>
-            </motion.div>
-
-            {/* Scene indicator dots */}
-            <motion.div
-              className="flex items-center gap-3 mt-10"
-              initial={{ opacity:0 }}
-              animate={{ opacity:1 }}
-              transition={{ delay:1.5 }}
-            >
-              {SCENES.map((s, i) => (
-                <button
-                  key={s.id}
-                  onClick={() => setScene(i)}
-                  className="flex items-center gap-1.5 transition-all duration-300"
-                  title={s.label}
-                >
-                  <div
-                    className="rounded-full transition-all duration-500"
-                    style={{
-                      width: scene === i ? '24px' : '6px',
-                      height: '6px',
-                      background: scene === i ? currentScene.accent : 'rgba(255,255,255,0.15)',
-                    }}
-                  />
-                  {scene === i && (
-                    <span className="font-mono text-[10px] text-muted">{s.label}</span>
-                  )}
-                </button>
-              ))}
+              </a>
             </motion.div>
           </div>
 
           {/* RIGHT — Photo */}
           <motion.div
             className="flex justify-center items-center order-1 lg:order-2 relative"
-            initial={{ opacity:0, scale:0.9 }}
-            animate={{ opacity:1, scale:1 }}
-            transition={{ duration:1, delay:0.5, ease:[0.32,0.72,0,1] }}
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.9, delay: 0.2, ease: [0.32, 0.72, 0, 1] }}
           >
-            {/* Outer glow ring */}
+            {/* Rotating glow ring — subtle */}
             <div
-              className="absolute rounded-full"
+              className="absolute rounded-full pointer-events-none"
               style={{
-                width:'340px', height:'340px',
-                background:`conic-gradient(from 0deg, ${currentScene.accent}40, transparent 40%, ${currentScene.accent}20, transparent 80%, ${currentScene.accent}40)`,
-                animation:'spin-slow 8s linear infinite',
-                transition:'background 1.2s ease',
+                width: '340px',
+                height: '340px',
+                background: 'conic-gradient(from 0deg, rgba(110,231,183,0.12), transparent 40%, rgba(129,140,248,0.08), transparent 80%, rgba(110,231,183,0.12))',
+                animation: 'spin-slow 12s linear infinite',
               }}
             />
 
-            {/* Photo container */}
-            <motion.div
-              className="relative z-10"
-              style={{ animation:'photoGlow 3s ease-in-out infinite' }}
-            >
-              {/* Accent ring */}
+            {/* Photo */}
+            <div className="relative z-10">
+              {/* Gradient border */}
               <div
-                className="absolute -inset-1 rounded-[2.5rem] opacity-60"
+                className="absolute -inset-[1px] rounded-[2.5rem]"
                 style={{
-                  background:`linear-gradient(135deg, ${currentScene.accent}50, transparent 50%, ${currentScene.accent}30)`,
-                  transition:'background 1.2s ease',
+                  background: 'linear-gradient(135deg, rgba(110,231,183,0.35), transparent 50%, rgba(129,140,248,0.2))',
+                  borderRadius: '2.5rem',
                 }}
               />
 
-              {/* The actual photo */}
-              <div className="relative w-64 h-80 md:w-72 md:h-96 lg:w-80 lg:h-[420px] rounded-[2rem] overflow-hidden border border-white/10">
+              <div
+                className="relative overflow-hidden"
+                style={{
+                  width: 'clamp(240px, 22vw, 310px)',
+                  height: 'clamp(300px, 28vw, 410px)',
+                  borderRadius: '2.4rem',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                }}
+              >
                 <img
                   src="/assets/ansal-photo.jpg"
                   alt="Ansal"
                   className="w-full h-full object-cover object-top"
-                  style={{ filter:'brightness(0.95) contrast(1.05)' }}
+                  style={{ filter: 'brightness(0.93) contrast(1.06)' }}
                 />
-                {/* Subtle gradient overlay bottom */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
 
-                {/* Name badge overlay */}
-                <div className="absolute bottom-4 left-4 right-4">
-                  <div className="backdrop-blur-md bg-black/50 rounded-xl px-4 py-2.5 border border-white/10">
-                    <p className="font-display font-bold text-text text-sm">Ansal</p>
-                    <p className="font-mono text-[10px]" style={{ color:currentScene.accent }}>
-                      {currentScene.emoji} {currentScene.label} Mode
-                    </p>
+                {/* Clean status badge */}
+                <div
+                  className="absolute bottom-4 left-4 right-4"
+                  style={{
+                    backdropFilter: 'blur(14px)',
+                    background: 'rgba(5,5,5,0.7)',
+                    borderRadius: '12px',
+                    padding: '10px 14px',
+                    border: '1px solid rgba(255,255,255,0.07)',
+                  }}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <div
+                      className="w-1.5 h-1.5 rounded-full"
+                      style={{
+                        background: '#6EE7B7',
+                        boxShadow: '0 0 5px #6EE7B7',
+                        animation: 'pulse-dot 2s ease-in-out infinite',
+                      }}
+                    />
+                    <span
+                      className="font-mono tracking-wide"
+                      style={{ fontSize: '9px', color: 'rgba(255,255,255,0.5)' }}
+                    >
+                      Open to Work
+                    </span>
                   </div>
+                  <p
+                    className="font-display font-bold text-white leading-tight"
+                    style={{ fontSize: '14px' }}
+                  >
+                    Ansal
+                  </p>
+                  <p
+                    className="font-mono mt-0.5"
+                    style={{ fontSize: '10px', color: 'rgba(110,231,183,0.7)' }}
+                  >
+                    B.Tech CSE · May 2026
+                  </p>
                 </div>
               </div>
-
-              {/* Floating accent dots */}
-              {[...Array(6)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-1.5 h-1.5 rounded-full"
-                  style={{
-                    background: currentScene.accent,
-                    top: `${15 + i * 13}%`,
-                    right: i % 2 === 0 ? '-20px' : 'auto',
-                    left: i % 2 !== 0 ? '-20px' : 'auto',
-                    opacity:0.4 + (i * 0.08),
-                  }}
-                  animate={{ y:[0, -6, 0], opacity:[0.3, 0.7, 0.3] }}
-                  transition={{ duration:2+i*0.5, repeat:Infinity, delay:i*0.3 }}
-                />
-              ))}
-            </motion.div>
+            </div>
           </motion.div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Scroll chevron */}
       <AnimatePresence>
         {chevron && (
           <motion.div
-            initial={{ opacity:0 }}
-            animate={{ opacity:1 }}
-            exit={{ opacity:0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
           >
-            <span className="w-px h-12 block"
-              style={{ background:`linear-gradient(to bottom, ${currentScene.accent}80, transparent)`, animation:'scrollp 2s ease-in-out infinite' }} />
-            <span className="font-mono text-[9px] tracking-[0.28em] uppercase text-muted">Scroll</span>
+            <span
+              className="w-px h-12 block"
+              style={{
+                background: 'linear-gradient(to bottom, rgba(110,231,183,0.6), transparent)',
+                animation: 'scrollpulse 2s ease-in-out infinite',
+              }}
+            />
+            <span
+              className="font-mono uppercase tracking-[0.28em]"
+              style={{ fontSize: '9px', color: 'rgba(255,255,255,0.25)' }}
+            >
+              Scroll
+            </span>
           </motion.div>
         )}
       </AnimatePresence>
 
       <style>{`
-        @keyframes scrollp {
+        @keyframes scrollpulse {
           0%,100%{opacity:0.6;transform:scaleY(1)}
-          50%{opacity:0.2;transform:scaleY(0.5)}
+          50%{opacity:0.15;transform:scaleY(0.5)}
         }
-        @keyframes photoGlow {
-          0%,100%{box-shadow:0 0 40px rgba(110,231,183,0.15),0 0 80px rgba(110,231,183,0.05)}
-          50%{box-shadow:0 0 60px rgba(110,231,183,0.25),0 0 120px rgba(110,231,183,0.1)}
+        @keyframes cursorblink {
+          0%,100%{opacity:1}
+          50%{opacity:0}
         }
       `}</style>
     </section>

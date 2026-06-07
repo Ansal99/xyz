@@ -11,12 +11,8 @@ import About            from './components/sections/About.jsx'
 import PersonalStory    from './components/sections/PersonalStory.jsx'
 import Experience       from './components/sections/Experience.jsx'
 import Projects         from './components/sections/Projects.jsx'
-import OpenSource       from './components/sections/OpenSource.jsx'
 import Research         from './components/sections/Research.jsx'
-import CreativeProcess  from './components/sections/CreativeProcess.jsx'
-import Services         from './components/sections/Services.jsx'
 import Achievements     from './components/sections/Achievements.jsx'
-import Certifications   from './components/sections/Certifications.jsx'
 import MomentsStrip     from './components/sections/MomentsStrip.jsx'
 import Contact          from './components/sections/Contact.jsx'
 import Footer           from './components/layout/Footer.jsx'
@@ -45,12 +41,8 @@ export default function App() {
             <section id="personal-story"><PersonalStory /></section>
             <section id="experience"><Experience /></section>
             <section id="projects"><Projects /></section>
-            <section id="open-source"><OpenSource /></section>
             <section id="research"><Research /></section>
-            <section id="creative-process"><CreativeProcess /></section>
-            <section id="services"><Services /></section>
             <section id="achievements"><Achievements /></section>
-            <section id="certifications"><Certifications /></section>
             <section id="moments"><MomentsStrip /></section>
             <section id="contact"><Contact /></section>
           </main>

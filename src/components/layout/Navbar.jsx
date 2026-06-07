@@ -15,11 +15,10 @@ const navItems = [
 ]
 
 export default function Navbar() {
-  const [scrolled, setScrolled]   = useState(false)
-  const [menuOpen, setMenuOpen]   = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const navigate = useNavigate()
 
-  // Step 51 — keyboard shortcuts
   useKeyboardNav(navigate)
 
   useEffect(() => {
@@ -60,7 +59,7 @@ export default function Navbar() {
             A.K
           </a>
 
-          {/* Step 53 — Open to Work badge */}
+          {/* Open to Work badge */}
           {siteConfig.openToWork && (
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
@@ -79,7 +78,7 @@ export default function Navbar() {
             </motion.div>
           )}
 
-          {/* Desktop items */}
+          {/* Desktop nav items */}
           <div className="hidden md:flex items-center gap-1">
             {navItems.map(item => (
               <a
@@ -94,15 +93,6 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Gallery link */}
-          <Link
-            to="/gallery"
-            className="hidden md:flex ml-1 px-4 py-1.5 rounded-full font-body text-sm
-              text-accent border border-accent/30 hover:bg-accent/10 transition-all duration-200"
-          >
-            Gallery
-          </Link>
-
           {/* Mobile hamburger */}
           <button
             className="md:hidden p-2 ml-2"
@@ -110,20 +100,14 @@ export default function Navbar() {
             aria-label="Menu"
           >
             <div className="flex flex-col gap-1.5">
-              <span
-                className={`block h-[1.5px] w-5 bg-text transition-transform duration-300
-                  ${menuOpen ? 'rotate-45 translate-y-[4.5px]' : ''}`}
-              />
-              <span
-                className={`block h-[1.5px] w-5 bg-text transition-transform duration-300
-                  ${menuOpen ? '-rotate-45 -translate-y-[4.5px]' : ''}`}
-              />
+              <span className={`block h-[1.5px] w-5 bg-text transition-transform duration-300 ${menuOpen ? 'rotate-45 translate-y-[4.5px]' : ''}`} />
+              <span className={`block h-[1.5px] w-5 bg-text transition-transform duration-300 ${menuOpen ? '-rotate-45 -translate-y-[4.5px]' : ''}`} />
             </div>
           </button>
         </div>
       </motion.nav>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -134,7 +118,6 @@ export default function Navbar() {
             className="fixed inset-0 z-40 bg-black/90 backdrop-blur-3xl flex flex-col items-center justify-center gap-4"
             onClick={() => setMenuOpen(false)}
           >
-            {/* Open to Work badge — mobile */}
             {siteConfig.openToWork && (
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
@@ -164,28 +147,13 @@ export default function Navbar() {
               </motion.a>
             ))}
 
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: navItems.length * 0.08 + 0.1 }}
-            >
-              <Link
-                to="/gallery"
-                onClick={() => setMenuOpen(false)}
-                className="font-display text-2xl text-accent"
-              >
-                Gallery →
-              </Link>
-            </motion.div>
-
-            {/* Keyboard hint — desktop users who opened via keyboard */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
               className="absolute bottom-8 font-mono text-[10px] text-muted tracking-widest"
             >
-              Press G for Gallery · / for Contact
+              Press / for Contact
             </motion.p>
           </motion.div>
         )}
