@@ -2,10 +2,18 @@ import { motion } from 'framer-motion'
 import SectionHeader from '../ui/SectionHeader.jsx'
 import { ButtonPrimary, ButtonGhost } from '../ui/Button.jsx'
 import { projectsData } from '../../data/projects.js'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { GithubLogo } from '@phosphor-icons/react'
 
-function ProjectCard({ project, index, large }) {
+function ProjectCard({ project, index }) {
+  const navigate = useNavigate()
+
+  function handleCaseStudy() {
+    // Current scroll position save karo BEFORE navigating
+    sessionStorage.setItem('portfolio_scroll', String(window.scrollY))
+    navigate(project.caseStudy)
+  }
+
   return (
     <motion.div
       className="card-bezel"
@@ -18,19 +26,17 @@ function ProjectCard({ project, index, large }) {
       <div
         className="card-bezel-inner relative overflow-hidden flex flex-col justify-between"
         style={{
-          minHeight: large ? '360px' : '320px',
+          minHeight: '320px',
           background: `linear-gradient(135deg, ${project.accentColor}12, #0D0D0D)`,
         }}
       >
-        {/* Decorative name */}
         <span
           className="absolute top-2 right-4 font-display font-bold select-none pointer-events-none"
-          style={{ fontSize: large ? '7rem' : '5rem', opacity: 0.05, color: project.accentColor, lineHeight: 1 }}
+          style={{ fontSize: '5rem', opacity: 0.05, color: project.accentColor, lineHeight: 1 }}
         >
           {project.name}
         </span>
 
-        {/* Badge */}
         {project.badge && (
           <span
             className="absolute top-4 right-4 font-mono text-xs px-2.5 py-1 rounded-full border"
@@ -48,7 +54,7 @@ function ProjectCard({ project, index, large }) {
           <span className="font-mono text-xs text-muted mb-2 block">{project.type}</span>
           <h3
             className="font-display font-bold text-text mb-1"
-            style={{ fontSize: large ? '2rem' : '1.5rem', color: project.accentColor }}
+            style={{ fontSize: '1.5rem', color: project.accentColor }}
           >
             {project.name}
           </h3>
@@ -62,9 +68,9 @@ function ProjectCard({ project, index, large }) {
           </div>
           <div className="flex gap-3 flex-wrap">
             {project.caseStudy && (
-              <Link to={project.caseStudy}>
-                <ButtonPrimary>View Case Study →</ButtonPrimary>
-              </Link>
+              <ButtonPrimary onClick={handleCaseStudy}>
+                View Case Study →
+              </ButtonPrimary>
             )}
             <ButtonGhost href={project.github} target="_blank" rel="noopener">
               <GithubLogo size={16} weight="fill" /> GitHub
@@ -80,10 +86,9 @@ export default function Projects() {
   return (
     <section id="projects" className="py-32 md:py-48 max-w-6xl mx-auto px-4 md:px-8">
       <SectionHeader eyebrow="Projects" title="What I've Built" />
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {projectsData.map((p, i) => (
-          <ProjectCard key={p.id} project={p} index={i} large={false} />
+          <ProjectCard key={p.id} project={p} index={i} />
         ))}
       </div>
     </section>

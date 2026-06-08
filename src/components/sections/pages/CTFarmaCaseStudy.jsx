@@ -4,14 +4,15 @@ import { motion } from 'framer-motion'
 import { ArrowLeft } from '@phosphor-icons/react'
 import { ButtonGhost } from '../../ui/Button.jsx'
 import Card from '../../ui/Card.jsx'
+import { lenis } from '../../../main.jsx'
 
 const FEATURES = [
-  { title: 'AI Farming Assistant',      color: '#6EE7B7', tag: 'Mistral AI',      desc: 'Farmers type or speak a question — Mistral AI answers in structured bullet points. Voice input via Web Speech API. Bilingual Hindi + English via Google Translate.' },
-  { title: 'Plant Disease Detection',   color: '#818CF8', tag: 'PlantNet API',    desc: 'Upload a photo or capture from camera. PlantNet identifies plant species, common name, family, and confidence score. Built for field use — no expertise required.' },
-  { title: 'Live Commodity Prices',     color: '#F59E0B', tag: 'Web Scraping',    desc: 'Real-time Himachal Pradesh mandi prices for 60+ commodities scraped by date. District, market, min/max/avg price in a responsive table.' },
-  { title: 'Government Schemes',        color: '#EC4899', tag: 'BeautifulSoup',   desc: 'Live scraping of HP government agricultural schemes. Cards with title, image, and link — always current, no manual updates needed.' },
-  { title: 'Agriculture News',          color: '#6EE7B7', tag: 'GNews API',       desc: 'Latest agriculture news with pagination — loads 5 at a time. Title, description, image, and source link.' },
-  { title: '15 Agriculture Calculators',color: '#818CF8', tag: 'Built-in Tools',  desc: 'Seed Rate, Fertilizer, Soil pH, Irrigation, Crop Yield, Drip Irrigation, Rainwater Harvesting, Frost Prediction, Heat Stress, GDD, Harvest Timing, Cost of Cultivation, Loan EMI, Feed Requirement, Tractor Fuel Efficiency.' },
+  { title: 'AI Farming Assistant',       color: '#6EE7B7', tag: 'Mistral AI',    desc: 'Farmers type or speak a question — Mistral AI answers in structured bullet points. Voice input via Web Speech API. Bilingual Hindi + English via Google Translate.' },
+  { title: 'Plant Disease Detection',    color: '#818CF8', tag: 'PlantNet API',  desc: 'Upload a photo or capture from camera. PlantNet identifies plant species, common name, family, and confidence score. Built for field use — no expertise required.' },
+  { title: 'Live Commodity Prices',      color: '#F59E0B', tag: 'Web Scraping',  desc: 'Real-time Himachal Pradesh mandi prices for 60+ commodities scraped by date. District, market, min/max/avg price in a responsive table.' },
+  { title: 'Government Schemes',         color: '#EC4899', tag: 'BeautifulSoup', desc: 'Live scraping of HP government agricultural schemes. Cards with title, image, and link — always current, no manual updates needed.' },
+  { title: 'Agriculture News',           color: '#6EE7B7', tag: 'GNews API',     desc: 'Latest agriculture news with pagination — loads 5 at a time. Title, description, image, and source link.' },
+  { title: '15 Agriculture Calculators', color: '#818CF8', tag: 'Built-in Tools',desc: 'Seed Rate, Fertilizer, Soil pH, Irrigation, Crop Yield, Drip Irrigation, Rainwater Harvesting, Frost Prediction, Heat Stress, GDD, Harvest Timing, Cost of Cultivation, Loan EMI, Feed Requirement, Tractor Fuel Efficiency.' },
 ]
 
 const STATS = [
@@ -32,14 +33,24 @@ const STACK = [
 export default function CTFarmaCaseStudy() {
   const navigate = useNavigate()
 
-  useEffect(() => { window.scrollTo(0, 0) }, [])
+  useEffect(() => {
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true })
+    } else {
+      window.scrollTo(0, 0)
+    }
+  }, [])
 
   function handleBack() {
+    const savedScroll = parseInt(sessionStorage.getItem('portfolio_scroll') || '0', 10)
     navigate('/')
     setTimeout(() => {
-      const el = document.querySelector('#projects')
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, 300)
+      if (lenis) {
+        lenis.scrollTo(savedScroll, { immediate: true })
+      } else {
+        window.scrollTo(0, savedScroll)
+      }
+    }, 50)
   }
 
   return (

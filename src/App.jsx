@@ -18,13 +18,21 @@ import Contact          from './components/sections/Contact.jsx'
 import Footer           from './components/layout/Footer.jsx'
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true)
+  // IMPORTANT: Function form use karo — har App mount pe fresh sessionStorage check hoga
+  const [isLoading, setIsLoading] = useState(
+    () => sessionStorage.getItem('portfolio_loaded') !== 'true'
+  )
+
+  function handleLoaderComplete() {
+    sessionStorage.setItem('portfolio_loaded', 'true')
+    setIsLoading(false)
+  }
 
   return (
     <>
       <AnimatePresence mode="wait">
         {isLoading && (
-          <Loader key="loader" onComplete={() => setIsLoading(false)} />
+          <Loader key="loader" onComplete={handleLoaderComplete} />
         )}
       </AnimatePresence>
 
