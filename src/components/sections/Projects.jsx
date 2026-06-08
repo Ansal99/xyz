@@ -9,7 +9,6 @@ function ProjectCard({ project, index }) {
   const navigate = useNavigate()
 
   function handleCaseStudy() {
-    // Current scroll position save karo BEFORE navigating
     sessionStorage.setItem('portfolio_scroll', String(window.scrollY))
     navigate(project.caseStudy)
   }
@@ -30,6 +29,26 @@ function ProjectCard({ project, index }) {
           background: `linear-gradient(135deg, ${project.accentColor}12, #0D0D0D)`,
         }}
       >
+        {/* Screenshot slot */}
+        {project.image && (
+          <div
+            className="w-full rounded-xl overflow-hidden mb-5"
+            style={{
+              height: '180px',
+              border: `1px solid ${project.accentColor}25`,
+              background: 'rgba(255,255,255,0.03)',
+            }}
+          >
+            <img
+              src={project.image}
+              alt={`${project.name} screenshot`}
+              className="w-full h-full object-cover object-top"
+              onError={e => { e.target.parentElement.style.display = 'none' }}
+            />
+          </div>
+        )}
+
+        {/* Decorative bg text */}
         <span
           className="absolute top-2 right-4 font-display font-bold select-none pointer-events-none"
           style={{ fontSize: '5rem', opacity: 0.05, color: project.accentColor, lineHeight: 1 }}

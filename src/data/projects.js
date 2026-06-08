@@ -11,6 +11,7 @@ export const projectsData = [
     github: 'https://github.com/Ansal99/CourtX1',
     caseStudy: '/projects/courtx',
     badge: 'ML',
+    image: '/assets/projects/courtx-ss.png',   // <-- apna ss yahan daal
   },
   {
     id: 'ctfarma',
@@ -24,5 +25,6 @@ export const projectsData = [
     github: 'https://github.com/Ansal99',
     caseStudy: '/projects/ctfarma',
     badge: 'AI',
+    image: '/assets/projects/ctfarma-ss.png',  // <-- apna ss yahan daal
   },
 ]
