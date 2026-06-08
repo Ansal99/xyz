@@ -20,7 +20,7 @@ export default function Education() {
           >
             <div className="card-bezel-inner relative overflow-hidden min-h-[420px] flex flex-col justify-end p-0">
 
-              {/* Background photo */}
+              {/* Background photo — no filter */}
               <img
                 src={item.photo}
                 alt={item.name}
@@ -32,10 +32,10 @@ export default function Education() {
                 }}
               />
 
-              {/* Dark gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
+              {/* Light gradient overlay — sirf bottom pe text readable ho */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-              {/* Logo badge — only if logo exists */}
+              {/* Logo badge */}
               {item.logo && (
                 <div className="absolute top-4 right-4 w-12 h-12 rounded-full
                   bg-white/10 backdrop-blur-sm border border-white/15
@@ -76,4 +76,4 @@ export default function Education() {
       </div>
     </section>
   )
-}
+}  
